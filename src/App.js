@@ -1,15 +1,23 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import ForgotPassword from "./components/ForgotPassword";
+import AdminLogin from "./components/AdminLogin";
+import Dashboard from "./components/Dashboard";
+import "./App.css";
 
 function App() {
   return (
-    <div>
-      <header>
-        <h1>Welcome to the App</h1>
-      </header>
-      <main>
-        <p>This is your app. Start building something amazing!</p>
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

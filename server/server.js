@@ -8,14 +8,11 @@ const adminRoute = require("./routes/admin");
 const organizationRoute = require("./routes/organization");
 const app = express();
 
-// Connect to MongoDB
 connectDB();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use("/api/admin", adminRoute);
 app.use("/api/mfa", mfaRoute);
 app.use("/api/organization", organizationRoute);
