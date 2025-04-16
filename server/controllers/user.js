@@ -140,6 +140,7 @@ exports.forgotPassword = async (req, res) => {
       message: "Password reset OTP sent to your email",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -189,7 +190,9 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    user.password = newPassword;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
