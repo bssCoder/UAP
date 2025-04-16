@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { loginAdmin } from "../redux/userActions";
 import logo from "../Images/logo.png";
 
 const AdminLogin = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -18,17 +20,10 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/admin/login`,
-        formData
-      );
-
-      localStorage.setItem("adminToken", response.data.token);
-      localStorage.setItem("adminData", JSON.stringify(response.data.user));
+      await dispatch(loginAdmin(formData.email, formData.password));
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
-    } finally {
       setLoading(false);
     }
   };
@@ -38,7 +33,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
+    <div className="min-h-[95vh] flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
       <div className="bg-white rounded-2xl p-8 md:p-10 w-full max-w-md shadow-xl">
         <div className="text-center mb-8">
           <img src={logo} alt="UAP Logo" className="w-20 h-20 mx-auto mb-4" />
@@ -98,7 +93,7 @@ const AdminLogin = () => {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
             Back to User Login

@@ -111,14 +111,27 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <a
-            href="/forgot-password"
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Forgot Password?
-          </a>
-          <p className="mt-4 text-sm text-gray-600">
+        <div className="mt-6 text-center space-y-4">
+          <div>
+            <a
+              href="/forgot-password"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Forgot Password?
+            </a>
+          </div>
+          <div className="flex flex-col items-center space-y-2">
+            <p className="text-sm text-gray-600">
+              Are you an administrator?
+            </p>
+            <button
+              onClick={() => navigate("/admin")}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Go to Admin Login
+            </button>
+          </div>
+          <p className="text-sm text-gray-600">
             Need help? Contact your organization administrator
           </p>
         </div>

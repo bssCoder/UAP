@@ -1,6 +1,7 @@
 const Organization = require("../models/organization");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res) => {
   try {
@@ -13,9 +14,9 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !user.role === "admin") {
+    if (!user || user.role !== "admin") {
       return res.status(401).json({
         success: false,
         error: "Invalid credentials or not an admin",
@@ -96,6 +97,12 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json({
       success: true,
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        orgId: user.orgId
+      }
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -107,7 +114,7 @@ exports.getUsers = async (req, res) => {
     const query = { orgId: req.body.orgId };
 
     // Only admins can see all users
-    if (!req.user.role === "admin") {
+    if (req.user.role !== "admin") {
       return res.status(403).json({
         success: false,
         error: "Admin access required",
