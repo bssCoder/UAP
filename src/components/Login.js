@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginWithEmail } from "../redux/userActions";
-import logo from "../Images/logo.png";
+import logo from "../Images/logo.jpeg";
 
 const Login = () => {
   const dispatch = useDispatch();

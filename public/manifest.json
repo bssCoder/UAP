@@ -3,18 +3,18 @@
   "name": "Unified Access Platform",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "logo.jpeg",
       "sizes": "64x64",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
+      "src": "logo192.jpeg",
+      "type": "image/jpeg",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
+      "src": "logo512.jpeg",
+      "type": "image/jpeg",
       "sizes": "512x512"
     }
   ],

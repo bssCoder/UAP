@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import logo from '../Images/logo.png';
 import { logout } from '../redux/userActions';
+import logo from '../Images/logo.jpeg';
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.user);
