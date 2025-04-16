@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import logo from '../Images/logo.png';
+import { logout } from '../redux/userActions';
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -16,12 +22,20 @@ const Navbar = () => {
           </Link>
           <div className="flex items-center">
             {user ? (
-              <Link
-                to="/dashboard"
-                className="px-4 py-2 rounded-md text-gray-800 hover:bg-gray-100 transition-colors"
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  to="/dashboard"
+                  className="px-4 py-2 rounded-md text-gray-800 hover:bg-gray-100 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="ml-4 px-4 py-2 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <Link
                 to="/login"
