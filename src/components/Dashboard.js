@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { logout } from "../redux/userActions";
+import { logout, setUser } from "../redux/userActions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -11,7 +11,6 @@ const Dashboard = () => {
   const token = useSelector((state) => state.user.token);
   console.log(user);
 
-  const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [message, setMessage] = useState("");
 
   const handleLogout = () => {
@@ -19,17 +18,18 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const enableMfa = async () => {
+  const toggleMfa = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`, {
-
-      }, {
+      console.log('Sending request to toggle MFA');
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setQrCodeUrl(response.data.qrCodeUrl);
-      setMessage("MFA enabled successfully. Scan the QR code with your authenticator app.");
+      console.log('Response received:', response.data);
+      setMessage(response.data.message);
+      dispatch(setUser(response.data.user, token));
     } catch (error) {
-      setMessage("Failed to enable MFA. Please try again.");
+      console.error('Error toggling MFA:', error);
+      setMessage("Failed to toggle MFA. Please try again.");
     }
   };
 
@@ -49,21 +49,12 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {!user.isMfaEnabled && (
-            <button
-              onClick={enableMfa}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mb-4"
-            >
-              Enable MFA
-            </button>
-          )}
-
-          {qrCodeUrl && (
-            <div className="mt-4">
-              <p>Scan this QR code with your authenticator app:</p>
-              <img src={qrCodeUrl} alt="MFA QR Code" className="mt-2" />
-            </div>
-          )}
+          <button
+            onClick={toggleMfa}
+            className={`bg-${user.mfaEnabled ? 'red' : 'blue'}-600 hover:bg-${user.mfaEnabled ? 'red' : 'blue'}-700 text-white px-4 py-2 rounded-lg mb-4`}
+          >
+            {user.mfaEnabled ? 'Disable MFA' : 'Enable MFA'}
+          </button>
 
           {message && <p className="mt-4 text-gray-700">{message}</p>}
 
