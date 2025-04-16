@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const Organization = require('../models/organization');
 
-const developer = (req, res, next) => {
+const adminMiddleware = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -9,11 +11,21 @@ const developer = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    if(req.user.role === "admin")   next();
+    
+    // Get full user details including role and organization
+    const user = await User.findById(decoded.id);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    const organization = await Organization.findById(user.orgId);
+    user.organization = organization;
+
+    req.user = user;
+    next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
   }
 };
 
-module.exports = developer;
+module.exports = adminMiddleware;

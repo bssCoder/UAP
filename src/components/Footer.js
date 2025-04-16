@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../Images/logo.png';
+import React from "react";
+import { Link } from "react-router-dom";
+import logo from "../Images/logo.png";
 
 const Footer = () => {
   return (
@@ -14,8 +14,8 @@ const Footer = () => {
               <span className="ml-2 text-xl font-semibold">UAP</span>
             </div>
             <p className="text-gray-400 text-sm">
-              Unified Access Platform - A secure and seamless Single Sign-On (SSO) solution 
-              for modern organizations.
+              Unified Access Platform - A secure and seamless Single Sign-On
+              (SSO) solution for modern organizations.
             </p>
           </div>
 
@@ -65,9 +65,9 @@ const Footer = () => {
               <Link to="/" className="text-gray-400 hover:text-white">
                 Home
               </Link>
-              <a 
-                href="https://github.com/BSS13/UAP" 
-                target="_blank" 
+              <a
+                href="https://github.com/bssCoder/UAP"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white"
               >

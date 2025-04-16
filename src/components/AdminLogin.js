@@ -21,9 +21,10 @@ const AdminLogin = () => {
 
     try {
       await dispatch(loginAdmin(formData.email, formData.password));
-      navigate("/dashboard");
+      navigate("/admin-dashboard"); 
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
+    } finally {
       setLoading(false);
     }
   };

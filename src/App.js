@@ -8,9 +8,9 @@ import Footer from "./components/Footer";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import AdminLogin from "./components/AdminLogin";
+import AdminDashboard from "./components/AdminDashboard";
 import Dashboard from "./components/Dashboard";
 import Home from "./components/Home";
-import AdminDashboard from "./components/AdminDashboard";
 import "./App.css";
 
 function App() {
@@ -25,9 +25,9 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/admin" element={<AdminLogin />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>

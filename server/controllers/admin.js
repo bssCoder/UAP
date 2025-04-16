@@ -36,6 +36,7 @@ exports.login = async (req, res) => {
         id: user._id,
         orgId: user.orgId,
         email: user.email,
+        role: user.role
       },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
@@ -45,10 +46,14 @@ exports.login = async (req, res) => {
     res.status(200).json({
       success: true,
       token,
-      organization: organization,
       user: {
         email: user.email,
         name: user.name,
+        role: user.role,
+        organization: organization,
+        orgId: user.orgId,
+        access: user.access,
+        loginHistory: user.loginHistory,
       },
     });
   } catch (error) {
@@ -101,8 +106,8 @@ exports.createUser = async (req, res) => {
         email: user.email,
         name: user.name,
         role: user.role,
-        orgId: user.orgId
-      }
+        orgId: user.orgId,
+      },
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -111,18 +116,13 @@ exports.createUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const query = { orgId: req.body.orgId };
-
-    // Only admins can see all users
-    if (req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        error: "Admin access required",
-      });
-    }
-
-    const users = await User.find(query);
-    res.status(200).json({ success: true, data: users });
+    const orgId = req.user.orgId;
+    const users = await User.find({ orgId });
+    
+    res.status(200).json({ 
+      success: true, 
+      data: users 
+    });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }

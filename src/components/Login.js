@@ -125,7 +125,7 @@ const Login = () => {
               Are you an administrator?
             </p>
             <button
-              onClick={() => navigate("/admin")}
+              onClick={() => navigate("/admin-login")}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               Go to Admin Login

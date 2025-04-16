@@ -56,7 +56,7 @@ const Dashboard = () => {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9-3-9m-9 9a9 9 0 019-9"
                           />
                         </svg>
                         <span className="text-gray-700 font-medium">
@@ -103,12 +103,20 @@ const Dashboard = () => {
 
               <div className="bg-purple-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2">Login History</h3>
-                <p>
-                  Last Login:{" "}
-                  {user?.loginHistory?.[0]?.timestamp
-                    ? new Date(user.loginHistory[0].timestamp).toLocaleString()
-                    : "No login history"}
-                </p>
+                {user?.loginHistory && user.loginHistory.length > 0 ? (
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {user.loginHistory.map((login, index) => (
+                      <div
+                        key={index}
+                        className="text-sm text-gray-600 border-b border-purple-100 pb-1"
+                      >
+                        {new Date(login.timestamp).toLocaleString()}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No login history</p>
+                )}
               </div>
             </div>
           </div>
