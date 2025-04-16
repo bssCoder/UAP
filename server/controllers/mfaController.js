@@ -15,6 +15,15 @@ exports.toggleMFA = async (req, res) => {
 
     res.status(200).json({
       status: "success",
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        access: user.access,
+        orgId: user.orgId,
+        mfaEnabled: user.mfaEnabled,
+        loginHistory: user.loginHistory,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -26,26 +35,25 @@ exports.toggleMFA = async (req, res) => {
 
 exports.verifyMFA = async (req, res) => {
   try {
-    const { email, otp, orgId } = req.body;
+    const { userId, token } = req.body;
 
-    if (!email || !otp || !orgId) {
+    if (!userId || !token) {
       return res.status(400).json({
         success: false,
-        error: "Please provide email, OTP and organization ID",
+        error: "Please provide userId and token",
       });
     }
 
     const user = await User.findOne({
-      email,
-      orgId,
-      mfaToken: otp,
+      _id: userId,
+      mfaToken: token,
       mfaTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: "Invalid or expired OTP",
+        error: "Invalid or expired token",
       });
     }
 
@@ -54,7 +62,7 @@ exports.verifyMFA = async (req, res) => {
     user.loginHistory.push({ timestamp: new Date() });
     await user.save();
 
-    const token = jwt.sign(
+    const jwtToken = jwt.sign(
       {
         id: user._id,
         orgId: user.orgId,
@@ -66,13 +74,14 @@ exports.verifyMFA = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      token,
+      token: jwtToken,
       user: {
         email: user.email,
         name: user.name,
         role: user.role,
         access: user.access,
         orgId: user.orgId,
+        mfaEnabled: user.mfaEnabled,
         loginHistory: user.loginHistory,
       },
     });

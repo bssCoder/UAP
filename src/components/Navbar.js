@@ -29,12 +29,7 @@ const Navbar = () => {
                 >
                   Dashboard
                 </Link>
-                <Link
-                  to="/settings"
-                  className="ml-4 px-4 py-2 rounded-md text-gray-800 hover:bg-gray-100 transition-colors"
-                >
-                  Settings
-                </Link>
+         
                 <button
                   onClick={handleLogout}
                   className="ml-4 px-4 py-2 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"

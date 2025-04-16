@@ -11,7 +11,6 @@ import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
 import Dashboard from "./components/Dashboard";
 import Home from "./components/Home";
-import Settings from "./components/Settings";
 import "./App.css";
 
 function App() {
@@ -24,7 +23,6 @@ function App() {
           <div className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/admin-login" element={<AdminLogin />} />

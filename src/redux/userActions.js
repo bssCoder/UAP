@@ -31,6 +31,17 @@ export const loginWithEmail = (email, password, orgId) => async (dispatch) => {
         withCredentials: true,
       }
     );
+
+    if (response.data.requireMFA) {
+      toast.dismiss(loadingToastId);
+      toast.success("✅ Please check your email for MFA code");
+      return {
+        mfaRequired: true,
+        userId: response.data.userId,
+        message: response.data.message,
+      };
+    }
+
     const { user, token } = response.data;
     dispatch(setUser(user, token));
     toast.dismiss(loadingToastId);
@@ -63,7 +74,7 @@ export const loginAdmin = (email, password) => async (dispatch) => {
       }
     );
     const { user, token } = response.data;
-    dispatch(setUser({ ...user, role: 'admin' }, token));
+    dispatch(setUser({ ...user, role: "admin" }, token));
     toast.dismiss(loadingToastId);
     toast.success("✅ Admin login successful!");
     return response.data;

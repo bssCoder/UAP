@@ -9,9 +9,6 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
-  console.log(user);
-
-  const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [message, setMessage] = useState("");
 
   const handleLogout = () => {
@@ -21,17 +18,46 @@ const Dashboard = () => {
 
   const enableMfa = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`, {
-
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setQrCodeUrl(response.data.qrCodeUrl);
-      setMessage("MFA enabled successfully. Scan the QR code with your authenticator app.");
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      if (response.data.status === "success") {
+        // Update Redux store with new user data
+        dispatch({
+          type: "SET_USER",
+          payload: { user: response.data.user, token }
+        });
+        setMessage(user.mfaEnabled ? "MFA disabled successfully." : "MFA enabled successfully.");
+      }
     } catch (error) {
-      setMessage("Failed to enable MFA. Please try again.");
+      setMessage("Failed to toggle MFA. Please try again.");
     }
   };
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="text-gray-700">
+            You do not have permission to access this page. Please log in to
+            continue.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 pt-6">
@@ -56,13 +82,6 @@ const Dashboard = () => {
             >
               Enable MFA
             </button>
-          )}
-
-          {qrCodeUrl && (
-            <div className="mt-4">
-              <p>Scan this QR code with your authenticator app:</p>
-              <img src={qrCodeUrl} alt="MFA QR Code" className="mt-2" />
-            </div>
           )}
 
           {message && <p className="mt-4 text-gray-700">{message}</p>}

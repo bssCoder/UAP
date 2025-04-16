@@ -45,6 +45,7 @@ exports.loginUser = async (req, res) => {
       return res.status(200).json({
         success: true,
         requireMFA: true,
+        userId: user._id,
         message: "MFA code has been sent to your email",
       });
     }

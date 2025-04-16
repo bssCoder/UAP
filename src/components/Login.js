@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginWithEmail } from "../redux/userActions";
+import { loginWithEmail, setUser } from "../redux/userActions";
 import axios from "axios";
 import logo from "../Images/logo.jpeg";
 
@@ -16,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaToken, setMfaToken] = useState("");
+  const [userId, setUserId] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,11 +29,14 @@ const Login = () => {
 
       if (response.mfaRequired) {
         setMfaRequired(true);
+        setUserId(response.userId);
         setLoading(false);
       } else {
         navigate("/dashboard");
       }
     } catch (error) {
+      console.error("Login error:", error);
+      alert(error.response?.data?.message || "Failed to login");
       setLoading(false);
     }
   };
@@ -42,19 +46,25 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/mfa/verify", {
-        userId: response.userId,
-        token: mfaToken,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/mfa/verify`,
+        {
+          userId: userId,
+          token: mfaToken,
+        }
+      );
 
-      if (response.data.message === "MFA verified") {
+      if (response.data.success) {
+        // Complete the login process after MFA verification
+        await dispatch(setUser(response.data.user, response.data.token));
         navigate("/dashboard");
       } else {
         alert("Invalid MFA token");
         setLoading(false);
       }
     } catch (error) {
-      alert("Failed to verify MFA");
+      console.error("MFA verification error:", error);
+      alert(error.response?.data?.message || "Failed to verify MFA");
       setLoading(false);
     }
   };
