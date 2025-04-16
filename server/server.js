@@ -9,15 +9,11 @@ const organizationRoute = require("./routes/organization");
 
 const app = express();
 
-// Connect to database
 connectDB();
 
-// CORS must come before route definitions
 app.use(
   cors({
-    origin: ["http://localhost:3000",
-      "https://uap-pi.vercel.app"
-    ],
+    origin: ["http://localhost:3000", "https://uap-pi.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
