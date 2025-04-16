@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendEmail = require("../utils/email");
-const { profileEnd } = require("console");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -65,12 +64,14 @@ exports.loginUser = async (req, res) => {
     );
     res.cookie("uapToken", token, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "None", // crucial for cross-domain SSO
       // domain: "localhost", // works across *.vercel.app domains
       domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
+    console.log("Token set in cookie:", token);
+    console.log(res.cookies);
 
     res.status(200).json({
       success: true,
