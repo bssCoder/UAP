@@ -213,7 +213,7 @@ const AdminDashboard = () => {
       {/* Login History */}
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Recent Logins</h2>
-        <div className="bg-white shadow-md rounded-lg p-4">
+        <div className="bg-white shadow-md rounded-lg p-4 max-h-64 overflow-y-auto">
           <div className="flow-root">
             <ul className="-mb-8">
               {users
