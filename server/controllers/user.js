@@ -62,7 +62,14 @@ exports.loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
     );
-
+    res.cookie("uapToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None", // crucial for cross-domain SSO
+      domain: ".vercel.app", // works across *.vercel.app domains
+      path: "/",
+    });
+    
     res.status(200).json({
       success: true,
       token,
@@ -243,7 +250,14 @@ exports.googleLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
     );
-
+    res.cookie("uapToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None", // crucial for cross-domain SSO
+      domain: ".vercel.app", // works across *.vercel.app domains
+      path: "/",
+    });
+    
     res.status(200).json({
       success: true,
       token,
@@ -261,3 +275,19 @@ exports.googleLogin = async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 };
+
+exports.loginCookie = async (req, res) => {
+  const token = req.cookies.uapToken;
+
+  if (!token) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, "secretKey"); // replace with your real secret
+    return res.json({ user: decoded }); // decoded contains user info if encoded during login
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
+

@@ -79,7 +79,6 @@ const Login = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
-   
 
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/user/google-login`,
@@ -151,7 +150,6 @@ const Login = () => {
         ) : (
           <>
             <form onSubmit={handleSubmit} className="space-y-6">
-       
               <div>
                 <label
                   htmlFor="email"

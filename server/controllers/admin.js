@@ -45,7 +45,14 @@ exports.login = async (req, res) => {
       { expiresIn: "12h" }
     );
     const organization = await Organization.findById(user.orgId);
-
+    res.cookie("uapToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None", // crucial for cross-domain SSO
+      domain: ".vercel.app", // works across *.vercel.app domains
+      path: "/",
+    });
+    
     res.status(200).json({
       success: true,
       token,

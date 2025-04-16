@@ -6,6 +6,7 @@ const userRoute = require("./routes/user");
 const mfaRoute = require("./routes/mfa");
 const adminRoute = require("./routes/admin");
 const organizationRoute = require("./routes/organization");
+const websiteRoute = require("./routes/website");
 
 const app = express();
 
@@ -19,16 +20,17 @@ app.use(
     credentials: true,
   })
 );
-// app.options('*', cors());
 
 // Middleware
 app.use(express.json());
+app.use(require('cookie-parser')()); 
 
 // Routes
 app.use("/api/admin", adminRoute);
 app.use("/api/mfa", mfaRoute);
 app.use("/api/organization", organizationRoute);
 app.use("/api/user", userRoute);
+app.use("/api/website", websiteRoute);
 
 const PORT = process.env.PORT || 7070;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT} 🔥`));
