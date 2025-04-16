@@ -279,6 +279,7 @@ exports.googleLogin = async (req, res) => {
 
 exports.loginCookie = async (req, res) => {
   const token = req.cookies.uapToken;
+  console.log(req)
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }
