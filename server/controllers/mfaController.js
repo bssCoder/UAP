@@ -12,7 +12,6 @@ exports.toggleMFA = async (req, res) => {
     }
     user.mfaEnabled = !user.mfaEnabled;
     await user.save();
-
     res.status(200).json({
       status: "success",
       user: {
@@ -25,6 +24,7 @@ exports.toggleMFA = async (req, res) => {
         loginHistory: user.loginHistory,
       },
     });
+
   } catch (error) {
     res.status(500).json({
       status: "error",

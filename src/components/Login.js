@@ -87,34 +87,36 @@ const Login = () => {
         </div>
 
         {mfaRequired ? (
-          <form onSubmit={handleMfaSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="mfaToken"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                MFA Token
-              </label>
-              <input
-                type="text"
-                id="mfaToken"
-                name="mfaToken"
-                value={mfaToken}
-                onChange={(e) => setMfaToken(e.target.value)}
-                placeholder="Enter your MFA token"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-              />
-            </div>
+          <div className="space-y-6">
+            <form onSubmit={handleMfaSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="mfaToken"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  MFA Token
+                </label>
+                <input
+                  type="text"
+                  id="mfaToken"
+                  name="mfaToken"
+                  value={mfaToken}
+                  onChange={(e) => setMfaToken(e.target.value)}
+                  placeholder="Enter your MFA token"
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:bg-blue-400"
-            >
-              {loading ? "Verifying..." : "Verify MFA"}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:bg-blue-400"
+              >
+                {loading ? "Verifying..." : "Verify MFA"}
+              </button>
+            </form>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

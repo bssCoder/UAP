@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { logout } from "../redux/userActions";
+import { logout, setUser } from "../redux/userActions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
+
   const [message, setMessage] = useState("");
 
   const handleLogout = () => {
@@ -16,7 +17,7 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const enableMfa = async () => {
+  const toggleMfa = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`,
@@ -25,14 +26,16 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
+
       if (response.data.status === "success") {
         // Update Redux store with new user data
-        dispatch({
-          type: "SET_USER",
-          payload: { user: response.data.user, token }
-        });
-        setMessage(user.mfaEnabled ? "MFA disabled successfully." : "MFA enabled successfully.");
+
+        dispatch(setUser(response.data.user, token));
+        setMessage(
+          user.mfaEnabled
+            ? "MFA disabled successfully."
+            : "MFA enabled successfully."
+        );
       }
     } catch (error) {
       setMessage("Failed to toggle MFA. Please try again.");
@@ -75,16 +78,16 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {!user.isMfaEnabled && (
-            <button
-              onClick={enableMfa}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mb-4"
-            >
-              Enable MFA
-            </button>
-          )}
+          <button
+            onClick={toggleMfa}
+            className={`bg-${user.mfaEnabled ? "red" : "blue"}-600 hover:bg-${
+              user.mfaEnabled ? "red" : "blue"
+            }-700 text-white px-4 py-2 rounded-lg mb-2`}
+          >
+            {user.mfaEnabled ? "Disable MFA" : "Enable MFA"}
+          </button>
 
-          {message && <p className="mt-4 text-gray-700">{message}</p>}
+          {message && <p className="my-2 text-gray-700">{message}</p>}
 
           <div className="grid grid-cols-1 gap-6">
             {/* Access Card */}
