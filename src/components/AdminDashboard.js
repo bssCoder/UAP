@@ -25,7 +25,7 @@ const AdminDashboard = () => {
   const [showDomainModal, setShowDomainModal] = useState(false);
 
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    if (!user || user.role !== "admin" || !user.organization) {
       navigate("/login");
     }
   }, [user, navigate]);
@@ -184,6 +184,51 @@ const AdminDashboard = () => {
     user.organization.domains = updatedOrg.domains;
   };
 
+  const handleDeleteUser = async (userId) => {
+    // Prevent admin from deleting themselves
+    if (userId === user._id) {
+      toast.error("You cannot delete your own account");
+      return;
+    }
+
+    // Show a confirmation dialog with the user's email
+    const userToDelete = users.find((u) => u._id === userId);
+    if (
+      !window.confirm(
+        `Are you sure you want to delete user ${userToDelete.email}? This action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/delete-users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUsers(users.filter((user) => user._id !== userId));
+        toast.success("User deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      if (error.response?.status === 401) {
+        toast.error("Your session has expired. Please login again.");
+        navigate("/admin-login");
+      } else if (error.response?.status === 403) {
+        toast.error("You don't have permission to delete this user");
+      } else {
+        toast.error(error.response?.data?.error || "Failed to delete user");
+      }
+    }
+  };
+
   const availableDomains = user?.organization?.domains
     ? Object.entries(user.organization.domains).map(([name, domain]) => domain)
     : [];
@@ -224,6 +269,7 @@ const AdminDashboard = () => {
                   onChange={(e) =>
                     setNewUser({ ...newUser, name: e.target.value })
                   }
+                  placeholder="Enter user's name"
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   required
                 />
@@ -236,6 +282,7 @@ const AdminDashboard = () => {
                 <input
                   type="email"
                   value={newUser.email}
+                  placeholder="Enter user's email"
                   onChange={(e) =>
                     setNewUser({ ...newUser, email: e.target.value })
                   }
@@ -251,6 +298,7 @@ const AdminDashboard = () => {
                 <input
                   type="password"
                   value={newUser.password}
+                  placeholder="Enter user's password"
                   onChange={(e) =>
                     setNewUser({ ...newUser, password: e.target.value })
                   }
@@ -481,6 +529,12 @@ const AdminDashboard = () => {
                         className="px-4 py-2 rounded-md text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200"
                       >
                         Manage Access
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(user._id)}
+                        className="px-4 py-2 rounded-md text-sm font-medium bg-red-600 text-white hover:bg-red-700"
+                      >
+                        Delete
                       </button>
                     </div>
                   </td>

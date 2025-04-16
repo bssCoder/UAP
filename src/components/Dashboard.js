@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -10,6 +10,11 @@ const Dashboard = () => {
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
   const [message, setMessage] = useState("");
 
   const handleLogout = () => {
@@ -32,7 +37,7 @@ const Dashboard = () => {
 
         dispatch(setUser(response.data.user, token));
         setMessage(
-          user.mfaEnabled
+          user?.mfaEnabled
             ? "MFA disabled successfully."
             : "MFA enabled successfully."
         );
@@ -41,10 +46,6 @@ const Dashboard = () => {
       setMessage("Failed to toggle MFA. Please try again.");
     }
   };
-
-  if (!user) {
-    navigate("/");
-  }
 
   return (
     <div className="min-h-screen bg-gray-100 pt-6">
@@ -64,11 +65,11 @@ const Dashboard = () => {
 
           <button
             onClick={toggleMfa}
-            className={`bg-${user.mfaEnabled ? "red" : "blue"}-600 hover:bg-${
-              user.mfaEnabled ? "red" : "blue"
+            className={`bg-${user?.mfaEnabled ? "red" : "blue"}-600 hover:bg-${
+              user?.mfaEnabled ? "red" : "blue"
             }-700 text-white px-4 py-2 rounded-lg mb-2`}
           >
-            {user.mfaEnabled ? "Disable MFA" : "Enable MFA"}
+            {user?.mfaEnabled ? "Disable MFA" : "Enable MFA"}
           </button>
 
           {message && <p className="my-2 text-gray-700">{message}</p>}
@@ -81,7 +82,7 @@ const Dashboard = () => {
               </h3>
               {user?.access && user.access.length > 0 ? (
                 <div className="space-y-4">
-                  {user.access.map((domain, index) => (
+                  {user?.access.map((domain, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-between p-4 bg-blue-50 rounded-lg"

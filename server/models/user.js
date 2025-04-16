@@ -57,6 +57,15 @@ const userSchema = new mongoose.Schema(
     },
     passwordResetExpires: Date,
     mfaTokenExpiry: Date,
+    googleId: {
+      type: String,
+      sparse: true,
+      unique: true
+    },
+    name: {
+      type: String,
+      trim: true
+    },
   },
   {
     timestamps: true,

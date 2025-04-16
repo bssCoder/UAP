@@ -6,15 +6,15 @@ const sendEmail = require("../utils/email");
 
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password, orgId } = req.body;
-    if (!email || !password || !orgId) {
+    const { email, password } = req.body;
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
         error: "Please provide email, password and organization ID",
       });
     }
 
-    const user = await User.findOne({ email, orgId }).select("+password");
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -49,8 +49,8 @@ exports.loginUser = async (req, res) => {
         message: "MFA code has been sent to your email",
       });
     }
+    user.loginHistory.unshift({ timestamp: new Date() });
 
-    user.loginHistory.push({ timestamp: new Date() });
     await user.save();
 
     const token = jwt.sign(
@@ -204,5 +204,60 @@ exports.resetPassword = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+
+    if (!email || !googleId) {
+      return res.status(400).json({
+        success: false,
+        error: "Email, organization ID and Google ID are required",
+      });
+    }
+
+    let user = await User.findOne({
+      $or: [{ email }, { googleId }],
+    });
+
+    if (!user) {
+      res.status(400).json({
+        success: false,
+        error: "User not found",
+      });
+      return;
+    }
+
+    user.loginHistory.unshift({ timestamp: new Date() });
+
+    await user.save();
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        orgId: user.orgId,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+
+    res.status(200).json({
+      success: true,
+      token,
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        access: user.access,
+        orgId: user.orgId,
+        mfaEnabled: user.mfaEnabled,
+        loginHistory: user.loginHistory,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
   }
 };

@@ -89,6 +89,7 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 value={email}
+                placeholder="Email Address"
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
                 required
@@ -113,6 +114,7 @@ const ForgotPassword = () => {
               <input
                 type="text"
                 value={otp}
+                placeholder="Enter OTP"
                 onChange={(e) => setOtp(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
                 required
@@ -137,6 +139,7 @@ const ForgotPassword = () => {
               <input
                 type="password"
                 value={newPassword}
+                placeholder="New Password"
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"
                 required
@@ -154,7 +157,7 @@ const ForgotPassword = () => {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
             Back to Login

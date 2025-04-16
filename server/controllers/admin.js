@@ -30,13 +30,16 @@ exports.login = async (req, res) => {
         error: "Invalid credentials",
       });
     }
+    user.loginHistory.unshift({ timestamp: new Date() });
+
+    await user.save();
 
     const token = jwt.sign(
       {
         id: user._id,
         orgId: user.orgId,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
@@ -102,7 +105,7 @@ exports.createUser = async (req, res) => {
       name,
       access: access || [],
       mfaEnabled: false,
-      loginHistory: []
+      loginHistory: [],
     });
 
     res.status(201).json({
@@ -115,7 +118,7 @@ exports.createUser = async (req, res) => {
         orgId: user.orgId,
         access: user.access || [],
         mfaEnabled: user.mfaEnabled,
-        loginHistory: user.loginHistory
+        loginHistory: user.loginHistory,
       },
     });
   } catch (error) {
@@ -127,10 +130,10 @@ exports.getUsers = async (req, res) => {
   try {
     const orgId = req.user.orgId;
     const users = await User.find({ orgId });
-    
-    res.status(200).json({ 
-      success: true, 
-      data: users 
+
+    res.status(200).json({
+      success: true,
+      data: users,
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -141,13 +144,39 @@ exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const user = await User.findByIdAndDelete(userId);
-    if (!user) {
+    // Find the user before deleting to verify they exist
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
       return res.status(404).json({
         success: false,
         error: "User not found",
       });
     }
+
+    // Check if user is in the same organization as the admin
+    if (targetUser.orgId.toString() !== req.user.orgId.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: "You can only delete users in your organization",
+      });
+    }
+
+    // Prevent deletion of last admin
+    if (targetUser.role === "admin") {
+      const adminCount = await User.countDocuments({
+        orgId: req.user.orgId,
+        role: "admin",
+      });
+      if (adminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          error: "Cannot delete the last admin user",
+        });
+      }
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
 
     res.status(200).json({
       success: true,
@@ -161,7 +190,7 @@ exports.deleteUser = async (req, res) => {
 exports.toggleUserMfa = async (req, res) => {
   try {
     const { userId, enabled } = req.body;
-    
+
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -182,7 +211,7 @@ exports.toggleUserMfa = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `MFA ${enabled ? 'enabled' : 'disabled'} successfully`,
+      message: `MFA ${enabled ? "enabled" : "disabled"} successfully`,
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -192,7 +221,7 @@ exports.toggleUserMfa = async (req, res) => {
 exports.updateRole = async (req, res) => {
   try {
     const { userId, role } = req.body;
-    
+
     if (!userId || !role) {
       return res.status(400).json({
         success: false,
@@ -238,7 +267,7 @@ exports.updateRole = async (req, res) => {
 exports.updateAccess = async (req, res) => {
   try {
     const { userId, access } = req.body;
-    
+
     if (!userId || !Array.isArray(access)) {
       return res.status(400).json({
         success: false,

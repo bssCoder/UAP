@@ -48,9 +48,9 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Development Team</h3>
             <ul className="space-y-2 text-gray-400">
               <li>Bhawani Shankar Sarswat (22JE0246)</li>
-              <li>Ashok Mahala (22JE0190)</li>
-              <li>Ashish Singh (22JE0187)</li>
               <li>Ashish Singh (22JE0188)</li>
+              <li>Ashish Singh (22JE0187)</li>
+              <li>Ashok Mahala (22JE0190)</li>
             </ul>
           </div>
         </div>

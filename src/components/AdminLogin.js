@@ -58,6 +58,7 @@ const AdminLogin = () => {
               type="email"
               id="email"
               name="email"
+              placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
               required
@@ -76,6 +77,7 @@ const AdminLogin = () => {
               type="password"
               id="password"
               name="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               required

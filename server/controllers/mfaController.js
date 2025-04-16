@@ -24,7 +24,6 @@ exports.toggleMFA = async (req, res) => {
         loginHistory: user.loginHistory,
       },
     });
-
   } catch (error) {
     res.status(500).json({
       status: "error",
