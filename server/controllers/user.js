@@ -71,6 +71,7 @@ exports.loginUser = async (req, res) => {
         role: user.role,
         access: user.access,
         orgId: user.orgId,
+        mfaEnabled: user.mfaEnabled,
         loginHistory: user.loginHistory,
       },
     });
@@ -103,6 +104,7 @@ exports.updateUser = async (req, res) => {
         name: user.name,
         role: user.role,
         access: user.access,
+        mfaEnabled: user.mfaEnabled,
         orgId: user.orgId,
         loginHistory: user.loginHistory,
       },

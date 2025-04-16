@@ -3,15 +3,14 @@ const jwt = require("jsonwebtoken");
 
 exports.toggleMFA = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({
         status: "error",
         message: "User not found",
       });
     }
-
-    await user.mfaEnabled(!user.mfaEnabled);
+    user.mfaEnabled = !user.mfaEnabled;
     await user.save();
 
     res.status(200).json({

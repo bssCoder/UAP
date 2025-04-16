@@ -1,19 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import { logout } from "../redux/userActions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  const toke = useSelector((state) => state.user.token);
+  const token = useSelector((state) => state.user.token);
   console.log(user);
-  console.log(toke);
+
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const [message, setMessage] = useState("");
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
+  };
+
+  const enableMfa = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mfa/toggle`, {
+
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setQrCodeUrl(response.data.qrCodeUrl);
+      setMessage("MFA enabled successfully. Scan the QR code with your authenticator app.");
+    } catch (error) {
+      setMessage("Failed to enable MFA. Please try again.");
+    }
   };
 
   return (
@@ -31,6 +48,24 @@ const Dashboard = () => {
               Logout
             </button>
           </div>
+
+          {!user.isMfaEnabled && (
+            <button
+              onClick={enableMfa}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mb-4"
+            >
+              Enable MFA
+            </button>
+          )}
+
+          {qrCodeUrl && (
+            <div className="mt-4">
+              <p>Scan this QR code with your authenticator app:</p>
+              <img src={qrCodeUrl} alt="MFA QR Code" className="mt-2" />
+            </div>
+          )}
+
+          {message && <p className="mt-4 text-gray-700">{message}</p>}
 
           <div className="grid grid-cols-1 gap-6">
             {/* Access Card */}
