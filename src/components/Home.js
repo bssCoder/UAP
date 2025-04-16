@@ -1,9 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../redux/userActions";
+import axios from "axios";
+import { useDispatch } from "react-redux";
 
 const Home = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const checkLoginStatus = async () => {
+    try {
+      // Send a request to the backend to verify login status using the token in the cookie
+      const response = await axios.post(
+        "http://localhost:7070/api/user/login-cookie", // Ensure your backend URL is correct
 
+        // "https://uap-f7ii.onrender.com/api/user/login-cookie", // Ensure your backend URL is correct
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Make sure cookies are sent with the request
+        }
+      );
+      console.log(response);
+      if (response.data?.user) {
+        const { user, token } = response.data;
+        console.log("User data from cookie:", user);
+        // Dispatch user info to Redux store
+        dispatch(setUser(user, token));
+      }
+    } catch (error) {
+      console.error("Error verifying login status:", error);
+    }
+  };
+
+  // Use effect to check login status on initial load
+  useEffect(() => {
+    checkLoginStatus();
+  }, [dispatch]);
   return (
     <div className="min-h-screen ">
       {/* Hero Section */}

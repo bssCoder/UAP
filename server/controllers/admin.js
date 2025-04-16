@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
     const organization = await Organization.findById(user.orgId);
     res.cookie("uapToken", token, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "None", // crucial for cross-domain SSO
       domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
