@@ -69,7 +69,7 @@ exports.loginUser = async (req, res) => {
       domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
-    
+
     res.status(200).json({
       success: true,
       token,
@@ -257,7 +257,7 @@ exports.googleLogin = async (req, res) => {
       domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
-    
+
     res.status(200).json({
       success: true,
       token,
@@ -290,4 +290,3 @@ exports.loginCookie = async (req, res) => {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
-

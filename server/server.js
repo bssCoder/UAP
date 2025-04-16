@@ -7,14 +7,21 @@ const mfaRoute = require("./routes/mfa");
 const adminRoute = require("./routes/admin");
 const organizationRoute = require("./routes/organization");
 const websiteRoute = require("./routes/website");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 connectDB();
 
+app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://uap-pi.vercel.app","https://uapages.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://uap-pi.vercel.app",
+      "https://uapages.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -22,8 +29,6 @@ app.use(
 );
 
 // Middleware
-app.use(express.json());
-app.use(require('cookie-parser')()); 
 
 // Routes
 app.use("/api/admin", adminRoute);
