@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendEmail = require("../utils/email");
+const { profileEnd } = require("console");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -66,6 +67,7 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None", // crucial for cross-domain SSO
+      // domain: "localhost", // works across *.vercel.app domains
       domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
@@ -148,7 +150,6 @@ exports.forgotPassword = async (req, res) => {
       message: "Password reset OTP sent to your email",
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
@@ -278,15 +279,20 @@ exports.googleLogin = async (req, res) => {
 
 exports.loginCookie = async (req, res) => {
   const token = req.cookies.uapToken;
-
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
   try {
-    const decoded = jwt.verify(token, "secretKey"); // replace with your real secret
-    return res.json({ user: decoded }); // decoded contains user info if encoded during login
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // replace with your real secret
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    return res.json({ user: user, token: token }); // decoded contains user info if encoded during login
   } catch (error) {
+    // console.log(error);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
