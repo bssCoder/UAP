@@ -25,11 +25,11 @@ const AdminDashboard = () => {
   const [showDomainModal, setShowDomainModal] = useState(false);
 
   useEffect(() => {
-    if (!user || user.role !== "admin" || !user.organization) {
+    if (!user || user.role !== "admin") {
       navigate("/login");
     }
   }, [user, navigate]);
-
+console.log(user)
   useEffect(() => {
     const fetchData = async () => {
       if (!token || !user?.organization) return;

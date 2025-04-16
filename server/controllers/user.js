@@ -65,9 +65,9 @@ exports.loginUser = async (req, res) => {
     res.cookie("uapToken", token, {
       httpOnly: true,
       secure: false,
-      sameSite: "None", 
-      // domain: "localhost", 
-      domain: ".vercel.app", 
+      sameSite: "None",
+      // domain: "localhost",
+      domain: ".vercel.app",
       path: "/",
     });
 
@@ -254,7 +254,8 @@ exports.googleLogin = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "None", // crucial for cross-domain SSO
-      domain: ".vercel.app", // works across *.vercel.app domains
+      domain: "localhost", // works across *.vercel.app domains
+      // domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
 
@@ -278,6 +279,7 @@ exports.googleLogin = async (req, res) => {
 
 exports.loginCookie = async (req, res) => {
   const token = req.cookies.uapToken;
+  console.log(req.cookies);
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }

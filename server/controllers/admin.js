@@ -49,7 +49,8 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "None", // crucial for cross-domain SSO
-      domain: ".vercel.app", // works across *.vercel.app domains
+      domain: "localhost", // works across *.vercel.app domains
+      // domain: ".vercel.app", // works across *.vercel.app domains
       path: "/",
     });
     
