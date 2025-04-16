@@ -26,14 +26,17 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user", "developer"],
       default: "user",
     },
-    access: [
-      {
-        _id: false,
-        type: Map,
-        of: String,
-        required: true,
-      },
-    ],
+    access: {
+      type: [String],
+      default: [],
+      required: true,
+      validate: {
+        validator: function(domains) {
+          return domains.every(domain => typeof domain === 'string' && domain.length > 0);
+        },
+        message: 'Access domains must be non-empty strings'
+      }
+    },
     loginHistory: [
       {
         timestamp: {

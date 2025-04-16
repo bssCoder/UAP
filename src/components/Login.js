@@ -1,37 +1,28 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginWithEmail } from "../redux/userActions";
 import logo from "../Images/logo.png";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     orgId: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
+    
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/login`,
-        formData
-      );
-
-      if (response.data.requireMFA) {
-        alert("MFA code has been sent to your email");
-      } else if (response.data.success) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        window.location.href = "/dashboard";
-      }
-    } catch (err) {
-      setError(err.response?.data?.error || "An error occurred during login");
-    } finally {
+      await dispatch(loginWithEmail(formData.email, formData.password, formData.orgId));
+      navigate("/dashboard");
+    } catch (error) {
+      // Error handling is managed by the action
       setLoading(false);
     }
   };
@@ -54,9 +45,6 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
           <div>
             <label
               htmlFor="orgId"

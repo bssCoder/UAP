@@ -5,13 +5,12 @@ const organizationSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add organization name'],
   },
-  domains: [{
-    _id: false,
+  domains: {
     type: Map,
     of: String,
-    required: true
-  }],
-
+    required: true,
+    default: new Map()
+  },
   createdAt: {
     type: Date,
     default: Date.now,

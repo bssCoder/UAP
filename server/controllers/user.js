@@ -5,9 +5,10 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/email");
 
 exports.loginUser = async (req, res) => {
+  console.log("Login request received:", req.body);
   try {
     const { email, password, orgId } = req.body;
-
+    console.log("Login attempt with email:", email, "and orgId:", orgId);
     if (!email || !password || !orgId) {
       return res.status(400).json({
         success: false,

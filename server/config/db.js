@@ -7,14 +7,14 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
 
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        console.log(`🎉 MongoDB Connected: ${conn.connection.host} 📚`);
         
         mongoose.connection.once("open", () => {
             require('../models/user').ensureIndexes();
             require('../models/organization').ensureIndexes();
         });
     } catch (error) {
-        console.error(`Error: ${error.message}`);
+        console.error(`❌ Error: ${error.message}`);
         process.exit(1);
     }
 };
