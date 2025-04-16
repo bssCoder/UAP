@@ -24,67 +24,61 @@ exports.createOrganization = async (req, res) => {
 
 exports.addDomain = async (req, res) => {
   try {
-    const { organizationId } = req.body.orgId;
-    const domainData = req.body;
+    console.log("Adding domain...");
+    const { orgId, name, domain } = req.body;
 
-    if (!domainData || Object.keys(domainData).length === 0) {
+    if (!name || !domain) {
       return res
         .status(400)
-        .json({ success: false, error: "Domain data is required" });
+        .json({ success: false, error: "Domain name and URL are required" });
     }
 
-    const existingOrg = await Organization.findById(organizationId);
-    if (!existingOrg) {
+    const organization = await Organization.findById(orgId);
+    if (!organization) {
       return res
         .status(404)
         .json({ success: false, error: "Organization not found" });
     }
 
-    const organization = await Organization.findByIdAndUpdate(
-      organizationId,
-      { $push: { domains: new Map(Object.entries(domainData)) } },
-      { new: true }
-    );
+    // Add new domain to the Map
+    organization.domains.set(name, domain);
+    await organization.save();
 
     res.status(200).json({ success: true, data: organization });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid organization ID" });
-    }
     res.status(400).json({ success: false, error: error.message });
   }
 };
 
 exports.removeDomain = async (req, res) => {
   try {
-    const { organizationId } = req.params;
-    const { index } = req.query;
+    const { orgId, name } = req.body;
 
-    const existingOrg = await Organization.findById(organizationId);
-    if (!existingOrg) {
+    if (!orgId || !name) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Organization ID and domain name are required" });
+    }
+
+    const organization = await Organization.findById(orgId);
+    if (!organization) {
       return res
         .status(404)
         .json({ success: false, error: "Organization not found" });
     }
 
-    if (index < 0 || index >= existingOrg.domains.length) {
+    if (!organization.domains.has(name)) {
       return res
         .status(404)
-        .json({ success: false, error: "Invalid domain index" });
+        .json({ success: false, error: "Domain not found" });
     }
 
-    existingOrg.domains.splice(index, 1);
-    await existingOrg.save();
+    organization.domains.delete(name);
+    await organization.save();
 
-    res.status(200).json({ success: true, data: existingOrg });
+    res.status(200).json({ success: true, data: organization });
   } catch (error) {
-    if (error.kind === "ObjectId") {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid ID format" });
-    }
     res.status(400).json({ success: false, error: error.message });
   }
 };
+

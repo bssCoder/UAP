@@ -43,23 +43,7 @@ const Dashboard = () => {
   };
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-          <p className="text-gray-700">
-            You do not have permission to access this page. Please log in to
-            continue.
-          </p>
-          <button
-            onClick={() => navigate("/login")}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            Go to Login
-          </button>
-        </div>
-      </div>
-    );
+    navigate("/");
   }
 
   return (

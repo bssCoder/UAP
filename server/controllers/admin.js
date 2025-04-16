@@ -91,22 +91,31 @@ exports.createUser = async (req, res) => {
       });
     }
 
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       email,
-      password,
+      password: hashedPassword,
       orgId,
       role,
       name,
       access: access || [],
+      mfaEnabled: false,
+      loginHistory: []
     });
 
     res.status(201).json({
       success: true,
       user: {
+        _id: user._id,
         email: user.email,
         name: user.name,
         role: user.role,
         orgId: user.orgId,
+        access: user.access || [],
+        mfaEnabled: user.mfaEnabled,
+        loginHistory: user.loginHistory
       },
     });
   } catch (error) {
@@ -143,6 +152,122 @@ exports.deleteUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.toggleUserMfa = async (req, res) => {
+  try {
+    const { userId, enabled } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+      });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    targetUser.mfaEnabled = enabled;
+    await targetUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: `MFA ${enabled ? 'enabled' : 'disabled'} successfully`,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.updateRole = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    
+    if (!userId || !role) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID and role are required",
+      });
+    }
+
+    if (!["user", "developer", "admin"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid role specified",
+      });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    // Check if user is in the same organization as the admin
+    if (targetUser.orgId.toString() !== req.user.orgId.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: "You can only update users in your organization",
+      });
+    }
+
+    targetUser.role = role;
+    await targetUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Role updated successfully to ${role}`,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.updateAccess = async (req, res) => {
+  try {
+    const { userId, access } = req.body;
+    
+    if (!userId || !Array.isArray(access)) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID and access array are required",
+      });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    // Check if user is in the same organization as the admin
+    if (targetUser.orgId.toString() !== req.user.orgId.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: "You can only update users in your organization",
+      });
+    }
+
+    targetUser.access = access;
+    await targetUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Access permissions updated successfully",
     });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
