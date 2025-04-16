@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginWithEmail, setUser } from "../redux/userActions";
 import { GoogleLogin } from "@react-oauth/google";
@@ -14,6 +14,12 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const user = useSelector((state) => state.user.user);
+  useState(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
   const [loading, setLoading] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaToken, setMfaToken] = useState("");
