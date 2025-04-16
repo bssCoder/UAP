@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Toaster } from "react-hot-toast";
+import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import AdminLogin from "./components/AdminLogin";
@@ -15,6 +16,7 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <div className="App">
+          <Navbar />
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             <Route path="/" element={<Home />} />

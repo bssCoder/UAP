@@ -32,5 +32,5 @@ app.use("/api/mfa", mfaRoute);
 app.use("/api/organization", organizationRoute);
 app.use("/api/user", userRoute);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7070;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT} 🔥`));

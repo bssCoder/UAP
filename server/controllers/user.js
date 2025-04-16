@@ -5,10 +5,8 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/email");
 
 exports.loginUser = async (req, res) => {
-  console.log("Login request received:", req.body);
   try {
     const { email, password, orgId } = req.body;
-    console.log("Login attempt with email:", email, "and orgId:", orgId);
     if (!email || !password || !orgId) {
       return res.status(400).json({
         success: false,
@@ -33,7 +31,6 @@ exports.loginUser = async (req, res) => {
     }
 
     if (user.mfaEnabled) {
-      // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
       user.mfaToken = otp;
       user.mfaTokenExpiry = Date.now() + 2 * 60 * 1000;

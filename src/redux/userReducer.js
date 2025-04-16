@@ -1,4 +1,4 @@
-import { SET_USER, CLEAR_USER, SET_USER_PAY } from "./userActions";
+import { SET_USER, CLEAR_USER } from "./userActions";
 
 const setCookie = (name, value, days) => {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -17,8 +17,8 @@ let initialState = {
   token: null,
 };
 
-const cookieValue = getCookie("paramUser");
-const tokenValue = getCookie("paramToken");
+const cookieValue = getCookie("uapUser");
+const tokenValue = getCookie("uapToken");
 
 if (cookieValue) {
   try {
@@ -32,38 +32,18 @@ if (cookieValue) {
 if (tokenValue) {
   initialState.token = tokenValue;
 }
- 
+
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER:
       const { user, token } = action.payload;
-      setCookie("paramUser", JSON.stringify(user), 3650);
-      setCookie("paramToken", token, 3650);
-      return { ...state, user, token }; 
+      setCookie("uapUser", JSON.stringify(user), 3650);
+      setCookie("uapToken", token, 3650);
+      return { ...state, user, token };
     case CLEAR_USER:
-      setCookie("paramUser", "", -1); 
-      setCookie("paramToken", "", -1); 
-      return { ...state, user: null, token: null }; 
-    case SET_USER_PAY:
-      const { formData } = action.payload;
-
-      const updatedUser = {
-        ...state.user,
-        name: formData.name,
-        email: formData.email,
-        state: formData.state,
-        district: formData.district, 
-        contactNo: formData.contactNo,
-        pincode: formData.pincode,
-        address: formData.address,
-      };
-
-      setCookie("paramUser", JSON.stringify(updatedUser), 3650); 
-      return {
-        ...state,
-        user: updatedUser, 
-        token: state.token,
-      };
+      setCookie("uapUser", "", -1);
+      setCookie("uapToken", "", -1);
+      return { ...state, user: null, token: null };
 
     default:
       return state;

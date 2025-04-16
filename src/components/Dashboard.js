@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../Images/logo.png";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/userActions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -35,10 +36,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("user");
-    localStorage.removeItem("adminData");
+    dispatch(logout());
     navigate("/");
   };
 
@@ -51,28 +49,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <img src={logo} alt="UAP Logo" className="h-8 w-8" />
-              <span className="ml-2 text-xl font-semibold">UAP Dashboard</span>
-            </div>
-            <div className="flex items-center">
-              <span className="mr-4">{userData?.email}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 pt-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
@@ -80,9 +58,17 @@ const Dashboard = () => {
         )}
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4">
-            Welcome, {userData?.name || userData?.email}
-          </h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">
+              Welcome, {userData?.name || userData?.email}
+            </h2>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+            >
+              Logout
+            </button>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-blue-50 p-6 rounded-lg">

@@ -127,7 +127,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Team Members
 
+- Bhawani Shankar Sarswat (22JE0246)  
 - Ashok Mahala (22JE0190)  
 - Ashish Singh (22JE0187)  
 - Ashish Singh (22JE0188)  
-- Bhawani Shankar Sarswat (22JE0246)  

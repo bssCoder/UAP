@@ -2,7 +2,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 export const SET_USER = "SET_USER";
-export const SET_USER_PAY = "SET_USER_PAY";
 export const CLEAR_USER = "CLEAR_USER";
 
 export const setUser = (user, token) => ({
@@ -10,10 +9,6 @@ export const setUser = (user, token) => ({
   payload: { user, token },
 });
 
-export const setUserPay = (formData) => ({
-  type: SET_USER_PAY,
-  payload: { formData },
-});
 
 export const clearUser = () => ({
   type: CLEAR_USER,
